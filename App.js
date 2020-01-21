@@ -1,9 +1,11 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Image, Settings, Dimensions, SafeAreaView, ScrollView } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { Container, Header, Left, Body, Right, Button, Title, Text, Icon } from 'native-base';
+import { Container, Header, Left, Body, Right, Button, Title, Text, Icon, List, ListItem } from 'native-base';
 import { createStackNavigator } from 'react-navigation-stack';
+import { IMAGE } from './src/constants/image'
+import { createDrawerNavigator } from 'react-navigation-drawer';
 
 const CustomerHead = ({ title, isHome, navigation }) => {
   return (
@@ -49,7 +51,7 @@ const HomeScreen = ({ navigation }) => {
 const HomeDetail = ({ navigation }) => {
     return (
       <View style={{ flex: 1}}>
-        <CustomerHead title="Detalhes" isHome={false} navigation={navigation}/>
+        <CustomerHead title="Detalhes" navigation={navigation}/>
         <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>Home Screen Details</Text>
         </View>
@@ -57,31 +59,79 @@ const HomeDetail = ({ navigation }) => {
     );
 }
 
-const SettingsScreen = ({ navigation }) => {
+const SearchScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1}}>
-      <CustomerHead />
+      <CustomerHead title="Search" isHome={true} />
       <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>SettingsScreen</Text>
-        <Button onPress={() => navigation.navigate('SettingsDetail')}>
-          <Text>Go to SettingsScreen detail</Text>
+        <Text>SearchScreen</Text>
+        <Button onPress={() => navigation.navigate('SearchDetail')}>
+          <Text>Go to SearchScreen detail</Text>
         </Button>
       </View>
     </View>
   );
 }
 
-class SettingsDetail extends React.Component {
-  render() {
+const SearchDetail = ({ navigation }) => {
     return (
       <View style={{ flex: 1}}>
-        <CustomerHead />
+        <CustomerHead title="Settings Details" navigation={navigation}/>
         <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>Home Screen Details</Text>
         </View>
       </View>
     );
-  }
+}
+
+const Profile = ({ navigation }) => {
+  return (
+    <View style={{ flex: 1}}>
+      <CustomerHead title="Profile Details" navigation={navigation}/>
+      <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Profile Screen</Text>
+      </View>
+    </View>
+  );
+}
+
+const Setting = ({ navigation }) => {
+  return (
+    <View style={{ flex: 1}}>
+      <CustomerHead title="Settings Details" navigation={navigation}/>
+      <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Settings Screen</Text>
+      </View>
+    </View>
+  );
+}
+
+const SideMenu = () => {
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <View style={{height: 150, alignItems: 'center', justifyContent: 'center'}}>
+        <Image source={IMAGE.ICON_USER}
+          style={{ height: 120, width: 120, borderRadius: 60 }}
+          />
+      </View>
+      <ScrollView>
+        <List>
+          <ListItem>
+            <Text>Settings</Text>
+          </ListItem>
+          <ListItem>
+            <Text>Profile</Text>
+          </ListItem>
+        </List>
+      </ScrollView>
+
+      <List>
+          <ListItem noBorder>
+            <Text>Logout</Text>
+          </ListItem>
+        </List>
+    </SafeAreaView>
+  )
 }
 
 const navOptionsHandler = ({navigation}) => ({
@@ -102,19 +152,68 @@ const HomeStack = createStackNavigator({
 })
 
 const SettingsStack = createStackNavigator({
-  SettingsScreen: {
-    screen: SettingsScreen,
+  SearchScreen: {
+    screen: SearchScreen,
     navigationOptions: navOptionsHandler
   },
-  SettingsDetail: {
-    screen: SettingsDetail,
+  SearchDetail: {
+    screen: SearchDetail,
     navigationOptions: navOptionsHandler
   }
 })
 
-const TabNavigator = createBottomTabNavigator({
-  Home: HomeStack,
-  Settings: SettingsStack,
+const MainTabs = createBottomTabNavigator({
+  Home: {
+    screen: HomeStack,
+    navigationOptions: {
+      tabBarLabel: 'Home',
+      tabBarIcon: ({ tintColor }) => (
+        <Image 
+          source={IMAGE.ICON_MENU}
+          resizeMode="contain"
+          style={{ width: 20, height: 20}}
+        />
+      )
+    }
+  },
+  Search: {
+    screen: SettingsStack,
+    navigationOptions: {
+      tabBarLabel: 'Search',
+      tabBarIcon: ({ tintColor }) => (
+        <Image 
+          source={IMAGE.ICON_MENU}
+          resizeMode="contain"
+          style={{ width: 20, height: 20}}
+        />
+      )
+    }
+  }
 });
 
-export default createAppContainer(TabNavigator);
+const MainStack = createStackNavigator({
+  Home: {
+     screen: MainTabs,
+     navigationOptions: navOptionsHandler
+  },
+  Setting: {
+    screen: Setting,
+    navigationOptions: navOptionsHandler
+  },
+  Profile: {
+    screen: Profile,
+    navigationOptions: navOptionsHandler
+  }
+}, {initialRouteName: 'Home'});
+
+const appDrawer = createDrawerNavigator(
+  {
+    drawer: MainStack
+  }, 
+  {
+    contentComponent: SideMenu,
+    drawerWidth: Dimensions.get('window').width * 3/4
+  }
+)
+
+export default createAppContainer(appDrawer);
