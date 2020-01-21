@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image, Settings, Dimensions, SafeAreaView, ScrollView } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createBottomTabNavigator, createMaterialTopTabNavigator  } from 'react-navigation-tabs';
 import { Container, Header, Left, Body, Right, Button, Title, Text, Icon, List, ListItem } from 'native-base';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IMAGE } from './src/constants/image'
@@ -13,8 +13,8 @@ const CustomerHead = ({ title, isHome, navigation }) => {
         <Header>
           <Left>
             { isHome ? 
-              <Button transparent>
-                <Icon name='arrow-back' />
+              <Button transparent onPress={() => navigation.openDrawer()}>
+                <Icon name='menu' />
               </Button>: 
               <Button transparent onPress={() => navigation.goBack()}>
                 <Icon name='arrow-back' />
@@ -22,16 +22,47 @@ const CustomerHead = ({ title, isHome, navigation }) => {
            
           </Left>
           <Body>
-            <Title>{title}</Title>
+              <Title>{title}</Title>
           </Body>
-          <Right>
+          {/* <Right>
             <Button transparent>
               <Icon name='menu' />
             </Button>
-          </Right>
+          </Right> */}
         </Header>
       </Container>
   );
+}
+
+const Login = ({ navigation }) => {
+  return (
+    <View style={{ flex: 1}}>
+        <CustomerHead title="Home" isHome={true} navigation={navigation}/>
+        <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Login Screen</Text>
+          <Button onPress={() => navigation.navigate('app')}>
+            <Text>Login</Text>
+          </Button>
+          <Button onPress={() => navigation.navigate('Register')}>
+            <Text>Register</Text>
+          </Button>
+        </View>
+      </View>
+  )
+}
+
+const Register = ({ navigation }) => {
+  return (
+    <View style={{ flex: 1}}>
+        <CustomerHead title="Register" isHome={true} navigation={navigation}/>
+        <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Register Screen</Text>
+          <Button onPress={() => navigation.navigate('HomeScreen')}>
+            <Text>Register</Text>
+          </Button>
+        </View>
+      </View>
+  )
 }
 
 const HomeScreen = ({ navigation }) => {
@@ -106,7 +137,7 @@ const Setting = ({ navigation }) => {
   );
 }
 
-const SideMenu = () => {
+const SideMenu = ({ navigation }) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={{height: 150, alignItems: 'center', justifyContent: 'center'}}>
@@ -116,17 +147,17 @@ const SideMenu = () => {
       </View>
       <ScrollView>
         <List>
-          <ListItem>
+          <ListItem onPress={() => navigation.navigate('Setting')}>
             <Text>Settings</Text>
           </ListItem>
-          <ListItem>
+          <ListItem onPress={() => navigation.navigate('Profile')}>
             <Text>Profile</Text>
           </ListItem>
         </List>
       </ScrollView>
 
       <List>
-          <ListItem noBorder>
+          <ListItem noBorder onPress={() => navigation.navigate('auth')}>
             <Text>Logout</Text>
           </ListItem>
         </List>
@@ -162,6 +193,7 @@ const SettingsStack = createStackNavigator({
   }
 })
 
+// const MainTabs = createMaterialTopTabNavigator ({
 const MainTabs = createBottomTabNavigator({
   Home: {
     screen: HomeStack,
@@ -189,6 +221,8 @@ const MainTabs = createBottomTabNavigator({
       )
     }
   }
+}, {
+  swipeEnable: true, // just work on top navigation
 });
 
 const MainStack = createStackNavigator({
@@ -216,4 +250,25 @@ const appDrawer = createDrawerNavigator(
   }
 )
 
-export default createAppContainer(appDrawer);
+const authStack = createSwitchNavigator({
+  Login: {
+    screen: Login,
+    navigationOptions: navOptionsHandler
+  },
+  Register: {
+    screen: Register,
+    navigationOption: navOptionsHandler
+  }
+});
+
+const app = createSwitchNavigator(
+  {
+    app: appDrawer,
+    auth: authStack
+  },
+  {
+    initialRouteName: 'auth'
+  }
+)
+
+export default createAppContainer(app);
