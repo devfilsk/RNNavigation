@@ -1,169 +1,19 @@
 import React from 'react';
-import { View, Image, Settings, Dimensions, SafeAreaView, ScrollView } from 'react-native';
+import { View, Image, Dimensions, SafeAreaView, ScrollView } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator, createMaterialTopTabNavigator  } from 'react-navigation-tabs';
-import { Container, Header, Left, Body, Right, Button, Title, Text, Icon, List, ListItem } from 'native-base';
 import { createStackNavigator } from 'react-navigation-stack';
 import { IMAGE } from './src/constants/image'
 import { createDrawerNavigator } from 'react-navigation-drawer';
-
-const CustomerHead = ({ title, isHome, navigation }) => {
-  return (
-    <Container>
-        <Header>
-          <Left>
-            { isHome ? 
-              <Button transparent onPress={() => navigation.openDrawer()}>
-                <Icon name='menu' />
-              </Button>: 
-              <Button transparent onPress={() => navigation.goBack()}>
-                <Icon name='arrow-back' />
-              </Button>}
-           
-          </Left>
-          <Body>
-              <Title>{title}</Title>
-          </Body>
-          {/* <Right>
-            <Button transparent>
-              <Icon name='menu' />
-            </Button>
-          </Right> */}
-        </Header>
-      </Container>
-  );
-}
-
-const Login = ({ navigation }) => {
-  return (
-    <View style={{ flex: 1}}>
-        <CustomerHead title="Home" isHome={true} navigation={navigation}/>
-        <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Login Screen</Text>
-          <Button onPress={() => navigation.navigate('app')}>
-            <Text>Login</Text>
-          </Button>
-          <Button onPress={() => navigation.navigate('Register')}>
-            <Text>Register</Text>
-          </Button>
-        </View>
-      </View>
-  )
-}
-
-const Register = ({ navigation }) => {
-  return (
-    <View style={{ flex: 1}}>
-        <CustomerHead title="Register" isHome={true} navigation={navigation}/>
-        <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Register Screen</Text>
-          <Button onPress={() => navigation.navigate('HomeScreen')}>
-            <Text>Register</Text>
-          </Button>
-        </View>
-      </View>
-  )
-}
-
-const HomeScreen = ({ navigation }) => {
-    return (
-      <View style={{ flex: 1}}>
-        <CustomerHead title="Home" isHome={true} navigation={navigation}/>
-        <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Home Screen</Text>
-          <Button onPress={() => navigation.navigate('HomeDetail')}>
-            <Text>Go to Home detail</Text>
-          </Button>
-        </View>
-      </View>
-    );
-}
-
-const HomeDetail = ({ navigation }) => {
-    return (
-      <View style={{ flex: 1}}>
-        <CustomerHead title="Detalhes" navigation={navigation}/>
-        <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Home Screen Details</Text>
-        </View>
-      </View>
-    );
-}
-
-const SearchScreen = ({ navigation }) => {
-  return (
-    <View style={{ flex: 1}}>
-      <CustomerHead title="Search" isHome={true} />
-      <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>SearchScreen</Text>
-        <Button onPress={() => navigation.navigate('SearchDetail')}>
-          <Text>Go to SearchScreen detail</Text>
-        </Button>
-      </View>
-    </View>
-  );
-}
-
-const SearchDetail = ({ navigation }) => {
-    return (
-      <View style={{ flex: 1}}>
-        <CustomerHead title="Settings Details" navigation={navigation}/>
-        <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Home Screen Details</Text>
-        </View>
-      </View>
-    );
-}
-
-const Profile = ({ navigation }) => {
-  return (
-    <View style={{ flex: 1}}>
-      <CustomerHead title="Profile Details" navigation={navigation}/>
-      <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Profile Screen</Text>
-      </View>
-    </View>
-  );
-}
-
-const Setting = ({ navigation }) => {
-  return (
-    <View style={{ flex: 1}}>
-      <CustomerHead title="Settings Details" navigation={navigation}/>
-      <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Settings Screen</Text>
-      </View>
-    </View>
-  );
-}
-
-const SideMenu = ({ navigation }) => {
-  return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={{height: 150, alignItems: 'center', justifyContent: 'center'}}>
-        <Image source={IMAGE.ICON_USER}
-          style={{ height: 120, width: 120, borderRadius: 60 }}
-          />
-      </View>
-      <ScrollView>
-        <List>
-          <ListItem onPress={() => navigation.navigate('Setting')}>
-            <Text>Settings</Text>
-          </ListItem>
-          <ListItem onPress={() => navigation.navigate('Profile')}>
-            <Text>Profile</Text>
-          </ListItem>
-        </List>
-      </ScrollView>
-
-      <List>
-          <ListItem noBorder onPress={() => navigation.navigate('auth')}>
-            <Text>Logout</Text>
-          </ListItem>
-        </List>
-    </SafeAreaView>
-  )
-}
+import Register from './src/Components/auth/Register';
+import Login from './src/Components/auth/Login';
+import HomeScreen from './src/Components/HomeScreen';
+import HomeDetail from './src/Components/HomeDetail';
+import SearchScreen from './src/Components/SearchScreen';
+import SearchDetail from './src/Components/SearchDetail';
+import Profile from './src/Components/Profile';
+import Setting from './src/Components/Setting';
+import SideMenu from './src/Components/SideMenu'
 
 const navOptionsHandler = ({navigation}) => ({
   header: null, 
@@ -222,7 +72,9 @@ const MainTabs = createBottomTabNavigator({
     }
   }
 }, {
-  swipeEnable: true, // just work on top navigation
+  // swipeEnable: true, // just work on top navigation
+  // tabBarPosition: "bottom",
+  // style: {height: 100,}
 });
 
 const MainStack = createStackNavigator({
@@ -261,7 +113,7 @@ const authStack = createSwitchNavigator({
   }
 });
 
-const app = createSwitchNavigator(
+const MainApp = createSwitchNavigator(
   {
     app: appDrawer,
     auth: authStack
@@ -271,4 +123,10 @@ const app = createSwitchNavigator(
   }
 )
 
-export default createAppContainer(app);
+const AppNavigator = createAppContainer(MainApp);
+
+export default function App() {
+  return (
+    <AppNavigator />
+  )
+}
