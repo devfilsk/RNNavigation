@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, Dimensions, SafeAreaView, ScrollView } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator, createMaterialTopTabNavigator  } from 'react-navigation-tabs';
-import { createStackNavigator } from 'react-navigation-stack';
+import { createStackNavigator, TransitionPresets } from 'react-navigation-stack';
 import { IMAGE } from './src/constants/image'
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import Register from './src/Components/auth/Register';
@@ -30,6 +30,12 @@ const HomeStack = createStackNavigator({
     navigationOptions: navOptionsHandler,
     headerShown: false
   }
+},
+{
+  headerMode: 'none',
+  defaultNavigationOptions: {
+    ...TransitionPresets.SlideFromRightIOS,
+  },
 })
 
 const SettingsStack = createStackNavigator({
@@ -41,7 +47,16 @@ const SettingsStack = createStackNavigator({
     screen: SearchDetail,
     navigationOptions: navOptionsHandler
   }
-})
+},
+{
+  headerMode: 'none',
+  defaultNavigationOptions: {
+    gestureEnabled: true,
+      cardOverlayEnabled: true,
+      ...TransitionPresets.ModalPresentationIOS,
+  },
+}
+)
 
 // const MainTabs = createMaterialTopTabNavigator ({
 const MainTabs = createBottomTabNavigator({
